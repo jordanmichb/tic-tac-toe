@@ -102,16 +102,17 @@ const GameController = (function(
 
     const playRound = (row, column) => {
         Gameboard.placeToken(row, column, getCurrentPlayer().token);
-        if (gameWon(row, column, getCurrentPlayer().token)){
+        const gameStatus = getGameStatus(row, column, getCurrentPlayer().token);
+        if (gameStatus !== "no result"){
             Gameboard.printBoard();
-            console.log(`${getCurrentPlayer().name} has won!`);
+            console.log(gameStatus === "win" ? `${getCurrentPlayer().name} has won!` : `Tie game`);
             return;
         }
         switchPlayerTurn();
         printNextRound();
     }
     // 
-    const gameWon = (row, column, playerToken) => {
+    const getGameStatus = (row, column, playerToken) => {
         const board = Gameboard.getBoard();
 
         // Filter out invalid neighbors for cells on the edge of the board
@@ -185,12 +186,15 @@ const GameController = (function(
         }
 
         // Opposite directions are also checked, so only four calls need to be made
-        if (winningLine("N")) return true;
-        else if (winningLine("NE")) return true;
-        else if (winningLine("E")) return true;
-        else if (winningLine("SE")) return true;
+        if (winningLine("N")) return "win";
+        else if (winningLine("NE")) return "win";
+        else if (winningLine("E")) return "win";
+        else if (winningLine("SE")) return "win";
+        // For each row, create a new array of the cell's values and filter the rows that contain emtpy space
+        // If there are no empty spaces, the game is a tie
+        else if(!board.filter(row => (row.map(cell => cell.getValue()).includes(0))).length) return "tie"
 
-        return false;
+        return "no result";
     }
 
     printNextRound();
