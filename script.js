@@ -109,14 +109,12 @@ const GameController = (function(
         const token = getCurrentPlayer().token
         Gameboard.placeToken(row, column, token);
         if (gameWon(row, column, token)) {
-            Gameboard.clearBoard();
             console.log(`${getCurrentPlayer().name} has won!`);
-            return;
+            return "won";
         }
         else if (gameTied(row, column, token)) {
-            Gameboard.clearBoard();
             console.log(`Tie Game`);
-            return;
+            return "tie";
         }
         switchPlayerTurn();
         printNextRound();
@@ -218,26 +216,40 @@ const GameController = (function(
 
     return {
         playRound,
-        getCurrentPlayer
+        gameTied,
+        gameWon,
+        getCurrentPlayer,
+        clearBoard: Gameboard.clearBoard
     }
 })();
 
 const screenController = (function() {
     const playerDiv = document.querySelector(".player-turn");
     const boardDiv = document.querySelector(".board");
+    const modal = document.querySelector(".modal");
 
+    const game = GameController;
+
+    /* * * * * * * * *
+    * * Board Controls
+    * * * * * * * * * */
+
+    // Get current state of the board and populate the cells
     const displayScreen = () => {
+        // Clear previous state
         boardDiv.textContent = "";
 
         const board = Gameboard.getBoard();
+        // Display current player's turn
+        playerDiv.textContent = `${game.getCurrentPlayer().name}'s turn`;
 
-        playerDiv.textContent = `${GameController.getCurrentPlayer().name}'s turn`;
-
+        // For each cell, create a button and place it onto the board
         board.forEach((row, rowIdx) => {
             row.forEach((cell, colIdx) => {
                 const cellBtn = document.createElement("button");
                 cellBtn.classList.add("grid-cell");
                 cellBtn.textContent = cell.getValue();
+                // Add data attribute to the identify row/column the cell occupies
                 cellBtn.dataset.row = rowIdx;
                 cellBtn.dataset.column = colIdx;
 
@@ -245,21 +257,42 @@ const screenController = (function() {
             })
         })
     }
-
+    // Board event listener for playing the game
     function clickHandler(e) {
         const selectedRow = Number(e.target.dataset.row);
         const selectedColumn = Number(e.target.dataset.column);
-        console.log(`${selectedRow}, ${selectedColumn}`);
+
         // Make sure actual button was pushed
         if (isNaN(selectedRow) || isNaN(selectedColumn)) return;
         
-        GameController.playRound(selectedRow, selectedColumn);
-        
+        // Play the round the check for win/tie status
+        const round = game.playRound(selectedRow, selectedColumn);
+        if (round === "won" || round === "tie") {
+            showModal(round);
+        }
+
         displayScreen();
     }
 
     boardDiv.addEventListener('click', clickHandler);
 
+    /* * * * * * * * *
+    * * Modal Controls
+    * * * * * * * * * */
+    function showModal(round) {
+        const resultDiv = document.querySelector(".result");
+        modal.showModal();
+        round === "won" ? resultDiv.textContent = `${game.getCurrentPlayer().name} won the game!`
+                   : resultDiv.textContent = `Tie Game`;
+    }
+    // Once modal is closed, reset the board
+    document.querySelector(".reset-btn").addEventListener('click', () => {
+        modal.close();
+        game.clearBoard();
+        displayScreen();
+    })
+
+    // First screen render
     displayScreen();
 })();
 
