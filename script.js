@@ -5,6 +5,7 @@
 const Gameboard = (function() {
     const rows = 3;
     const columns = 3;
+    const numToWin = 3;
     const board = [];
     // Create a 2D array to represent the board
     for (let i = 0; i < rows; i++) {
@@ -30,9 +31,18 @@ const Gameboard = (function() {
         console.log(currentBoard);
     }
 
+    const getBoard = () => board;
+    const getRows = () => rows;
+    const getColumns = () => columns;
+    const getNumToWin = () => numToWin;
+
     return {
         placeToken,
-        printBoard
+        printBoard,
+        getBoard,
+        getRows,
+        getColumns,
+        getNumToWin
     }
 })();
 
@@ -92,8 +102,95 @@ const GameController = (function(
 
     const playRound = (row, column) => {
         Gameboard.placeToken(row, column, getCurrentPlayer().token);
+        if (gameWon(row, column, getCurrentPlayer().token)){
+            Gameboard.printBoard();
+            console.log(`${getCurrentPlayer().name} has won!`);
+            return;
+        }
         switchPlayerTurn();
         printNextRound();
+    }
+    // 
+    const gameWon = (row, column, playerToken) => {
+        const board = Gameboard.getBoard();
+
+        // Filter out invalid neighbors for cells on the edge of the board
+        const isValidNeighbor = (row, column) => {
+            if (row < 0 // Before first row
+                        || column < 0 // Before first column
+                        || row === Gameboard.getRows() // After last row
+                        || column === Gameboard.getColumns()) { // After last column
+                    
+                return false;
+            }
+            else return true;
+        }
+
+        // Check the line of cells in a given direction, starting at the placed token's location,
+        // and its opposite direction to see if there are enough consecutive tokens to win
+        const winningLine = (direction) => {
+            let consecutiveTokens = 1;
+            let getNextCell;
+            // Loop twice because direction has to be checked both ways
+            // First check the given direction, then its opposite.
+            for(let j = 0; j < 2; j++) {
+                let i = 1;
+                switch(direction) {
+                    case "N":
+                        getNextCell = function() { return [row - i, column] }
+                        direction = "S";
+                        break;
+                    case "NE":
+                        getNextCell = function() { return [row - i, column + i] }
+                        direction = "SW";
+                        break;
+                    case "E":
+                        getNextCell = function() { return [row, column + i] }
+                        direction = "W";
+                        break;
+                    case "SE":
+                        getNextCell = function() { return [row + i, column + i] }
+                        direction = "NW";
+                        break;
+                    case "S":
+                        getNextCell = function() { return [row + i, column] }
+                        direction = "N";
+                        break;
+                    case "SW":
+                        getNextCell = function() { return [row + i, column - i] }
+                        direction = "NE";
+                        break;
+                    case "W":
+                        getNextCell = function() { return [row, column - i] }
+                        direction = "E";
+                        break;
+                    case "NW":
+                        getNextCell = function() { return [row - i, column - i] }
+                        direction = "SE";
+                        break;
+                }
+                // While neighbor in this direction is a valid cell
+                for (i; isValidNeighbor(getNextCell()[0], getNextCell()[1]); i++) {
+                    // If this cell is a match, increment tally
+                    if (board[getNextCell()[0]][getNextCell()[1]].getValue() === playerToken) {
+                        consecutiveTokens++;
+                    } 
+                    // If cell is not a match, no point in checking the rest
+                    else break;
+                    // If enough consecutive tokens are found, this player has won
+                    if (consecutiveTokens === Gameboard.getNumToWin()) return true;
+                }
+            }
+            return false;
+        }
+
+        // Opposite directions are also checked, so only four calls need to be made
+        if (winningLine("N")) return true;
+        else if (winningLine("NE")) return true;
+        else if (winningLine("E")) return true;
+        else if (winningLine("SE")) return true;
+
+        return false;
     }
 
     printNextRound();
