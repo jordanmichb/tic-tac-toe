@@ -7,11 +7,15 @@ const Gameboard = (function() {
     const columns = 3;
     const numToWin = 3;
     const board = [];
-    // Create a 2D array to represent the board
-    for (let i = 0; i < rows; i++) {
-        board[i] = []
-        for (let j = 0; j < columns; j++) {
-            board[i].push(BoardCell());
+    clearBoard();
+
+    function clearBoard() {
+        // Create a 2D array to represent an empty board
+        for (let i = 0; i < rows; i++) {
+            board[i] = []
+            for (let j = 0; j < columns; j++) {
+                board[i].push(BoardCell());
+            }
         }
     }
 
@@ -37,6 +41,7 @@ const Gameboard = (function() {
     const getNumToWin = () => numToWin;
 
     return {
+        clearBoard,
         placeToken,
         printBoard,
         getBoard,
@@ -85,7 +90,7 @@ const GameController = (function(
             token: player2Token
         }
     ]
-
+    
     let currentPlayer = players[0];
 
     const switchPlayerTurn = () => {
@@ -101,18 +106,31 @@ const GameController = (function(
     }
 
     const playRound = (row, column) => {
-        Gameboard.placeToken(row, column, getCurrentPlayer().token);
-        const gameStatus = getGameStatus(row, column, getCurrentPlayer().token);
-        if (gameStatus !== "no result"){
-            Gameboard.printBoard();
-            console.log(gameStatus === "win" ? `${getCurrentPlayer().name} has won!` : `Tie game`);
+        const token = getCurrentPlayer().token
+        Gameboard.placeToken(row, column, token);
+        if (gameWon(row, column, token)) {
+            Gameboard.clearBoard();
+            console.log(`${getCurrentPlayer().name} has won!`);
+            return;
+        }
+        else if (gameTied(row, column, token)) {
+            Gameboard.clearBoard();
+            console.log(`Tie Game`);
             return;
         }
         switchPlayerTurn();
         printNextRound();
     }
+
+    const gameTied = () => {
+        // For each row, create a new array of the cell's values and filter the rows that contain emtpy space
+        // If there are no empty spaces, the game is a tie
+        if(!Gameboard.getBoard().filter(row => (row.map(cell => cell.getValue()).includes(0))).length)  
+            return true;
+        return false;
+    }
     // 
-    const getGameStatus = (row, column, playerToken) => {
+    const gameWon = (row, column, playerToken) => {
         const board = Gameboard.getBoard();
 
         // Filter out invalid neighbors for cells on the edge of the board
@@ -131,6 +149,7 @@ const GameController = (function(
         // and its opposite direction to see if there are enough consecutive tokens to win
         const winningLine = (direction) => {
             let consecutiveTokens = 1;
+            // Function to get the next cell in a given direction, defined later depending on direction
             let getNextCell;
             // Loop twice because direction has to be checked both ways
             // First check the given direction, then its opposite.
@@ -170,6 +189,7 @@ const GameController = (function(
                         direction = "SE";
                         break;
                 }
+                // Traverse the cells in a diven direction
                 // While neighbor in this direction is a valid cell
                 for (i; isValidNeighbor(getNextCell()[0], getNextCell()[1]); i++) {
                     // If this cell is a match, increment tally
@@ -186,15 +206,12 @@ const GameController = (function(
         }
 
         // Opposite directions are also checked, so only four calls need to be made
-        if (winningLine("N")) return "win";
-        else if (winningLine("NE")) return "win";
-        else if (winningLine("E")) return "win";
-        else if (winningLine("SE")) return "win";
-        // For each row, create a new array of the cell's values and filter the rows that contain emtpy space
-        // If there are no empty spaces, the game is a tie
-        else if(!board.filter(row => (row.map(cell => cell.getValue()).includes(0))).length) return "tie"
+        if (winningLine("N")) return true;
+        else if (winningLine("NE")) return true;
+        else if (winningLine("E")) return true;
+        else if (winningLine("SE")) return true;
 
-        return "no result";
+        return false;
     }
 
     printNextRound();
