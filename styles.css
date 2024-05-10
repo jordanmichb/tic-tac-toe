@@ -1,0 +1,15 @@
+.game-container {
+    border: 1px solid blue;
+    padding: 50px;
+}
+
+.player-turn {
+    border: 1px solid red;
+}
+
+.board {
+    border: 1px solid green;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}

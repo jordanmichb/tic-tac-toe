@@ -200,7 +200,49 @@ const GameController = (function(
     printNextRound();
 
     return {
-        playRound
+        playRound,
+        getCurrentPlayer
     }
+})();
+
+const screenController = (function() {
+    const playerDiv = document.querySelector(".player-turn");
+    const boardDiv = document.querySelector(".board");
+
+    const displayScreen = () => {
+        boardDiv.textContent = "";
+
+        const board = Gameboard.getBoard();
+
+        playerDiv.textContent = `${GameController.getCurrentPlayer().name}'s turn`;
+
+        board.forEach((row, rowIdx) => {
+            row.forEach((cell, colIdx) => {
+                const cellBtn = document.createElement("button");
+                cellBtn.classList.add("grid-cell");
+                cellBtn.textContent = cell.getValue();
+                cellBtn.dataset.row = rowIdx;
+                cellBtn.dataset.column = colIdx;
+
+                boardDiv.appendChild(cellBtn);
+            })
+        })
+    }
+
+    function clickHandler(e) {
+        const selectedRow = Number(e.target.dataset.row);
+        const selectedColumn = Number(e.target.dataset.column);
+        console.log(`${selectedRow}, ${selectedColumn}`);
+        // Make sure actual button was pushed
+        if (isNaN(selectedRow) || isNaN(selectedColumn)) return;
+        
+        GameController.playRound(selectedRow, selectedColumn);
+        
+        displayScreen();
+    }
+
+    boardDiv.addEventListener('click', clickHandler);
+
+    displayScreen();
 })();
 
