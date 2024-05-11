@@ -1,7 +1,7 @@
-/*
-** The gameboard keeps track of the board state
-** Only one instance is needed so it wrapped in an IIFE
-*/
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * Gameboard keeps track of the board state and controls all 
+* * logic that manipulates the board
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 const Gameboard = (function() {
     const rows = 3;
     const columns = 3;
@@ -22,9 +22,10 @@ const Gameboard = (function() {
     // Place a token on the board by changing the cell's value
     const placeToken = (row, column, playerToken) => {
         // If that cell is already populated, the move is invalid
-        if (board[row][column].getValue()) return;
+        if (board[row][column].getValue()) return false;
         // Otherwise, place the token
         board[row][column].addToken(playerToken);
+        return true;
     }
 
     // Print the gameboard to the console
@@ -51,10 +52,12 @@ const Gameboard = (function() {
     }
 })();
 
-/*
-** A cell is one square on the board and consists of a value that
-** represents an empty spot, player 1's token, or player 2's token
-*/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * BoardCell represent one square on the board. It consists 
+* * of a value that represents an empty spot, player 1's token, 
+* * or player 2's token
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 function BoardCell() {
     let value = 0;
     // Change cell's value
@@ -70,10 +73,10 @@ function BoardCell() {
     }
 }
 
-/*
-** GameController controls each turn of the game and
-** determines when there is a winner
-*/
+/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * GameController controls each turn of the game and
+* * determines when there is a winner
+* * * * * * * * * * * * * * * * * * * * * * * * * * * */
 const GameController = (function(
     player1 = "Player One", // Default parameters that can be changed
     player1Token = "X",
@@ -92,12 +95,16 @@ const GameController = (function(
     ]
     
     let currentPlayer = players[0];
+    let won = false;
+    let tied = false;
 
     const switchPlayerTurn = () => {
         currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
     }
 
     const getCurrentPlayer = () => currentPlayer;
+    const gameWon = () => won;
+    const gameTied = () => tied;
 
     // Print the current board state and announce whose turn it is
     const printNextRound = () => {
@@ -107,28 +114,27 @@ const GameController = (function(
 
     const playRound = (row, column) => {
         const token = getCurrentPlayer().token
-        Gameboard.placeToken(row, column, token);
-        if (gameWon(row, column, token)) {
-            console.log(`${getCurrentPlayer().name} has won!`);
-            return "won";
+        if (!Gameboard.placeToken(row, column, token)) return; // Return if occupied space is clicked
+        if (!setWon(row, column, token) && !setTied(row, column, token)) { // Only continue if game is not won/tied
+            switchPlayerTurn();
+            printNextRound();
         }
-        else if (gameTied(row, column, token)) {
-            console.log(`Tie Game`);
-            return "tie";
-        }
-        switchPlayerTurn();
-        printNextRound();
     }
 
-    const gameTied = () => {
-        // For each row, create a new array of the cell's values and filter the rows that contain emtpy space
-        // If there are no empty spaces, the game is a tie
-        if(!Gameboard.getBoard().filter(row => (row.map(cell => cell.getValue()).includes(0))).length)  
+    // For each row, create a new array of the cell's values and filter the rows that contain emtpy space
+    // If there are no empty spaces, the game is a tie
+    const setTied = () => {
+        if(!Gameboard.getBoard().filter(row => (row.map(cell => cell.getValue()).includes(0))).length) {
+            tied = true;
             return true;
+        }
         return false;
     }
-    // 
-    const gameWon = (row, column, playerToken) => {
+
+    // Check if the game has been won by taking the selected cell and checking all neighbors
+    // If a neighbor matches, follow that line forwards and backwards to check for
+    // consecutive tokens
+    const setWon = (row, column, playerToken) => {
         const board = Gameboard.getBoard();
 
         // Filter out invalid neighbors for cells on the edge of the board
@@ -143,53 +149,53 @@ const GameController = (function(
             else return true;
         }
 
-        // Check the line of cells in a given direction, starting at the placed token's location,
-        // and its opposite direction to see if there are enough consecutive tokens to win
-        const winningLine = (direction) => {
+        // Check the line of cells in a given direction and its opposite direction, 
+        // starting at the placed token's location, to see if there are enough consecutive tokens to win
+        const isWinningLine = (direction) => {
             let consecutiveTokens = 1;
             // Function to get the next cell in a given direction, defined later depending on direction
             let getNextCell;
             // Loop twice because direction has to be checked both ways
             // First check the given direction, then its opposite.
-            for(let j = 0; j < 2; j++) {
-                let i = 1;
+            for(let directionsChecked = 0; directionsChecked < 2; directionsChecked++) {
+                let distance = 1;
                 switch(direction) {
                     case "N":
-                        getNextCell = function() { return [row - i, column] }
+                        getNextCell = function() { return [row - distance, column] }
                         direction = "S";
                         break;
                     case "NE":
-                        getNextCell = function() { return [row - i, column + i] }
+                        getNextCell = function() { return [row - distance, column + distance] }
                         direction = "SW";
                         break;
                     case "E":
-                        getNextCell = function() { return [row, column + i] }
+                        getNextCell = function() { return [row, column + distance] }
                         direction = "W";
                         break;
                     case "SE":
-                        getNextCell = function() { return [row + i, column + i] }
+                        getNextCell = function() { return [row + distance, column + distance] }
                         direction = "NW";
                         break;
                     case "S":
-                        getNextCell = function() { return [row + i, column] }
+                        getNextCell = function() { return [row + distance, column] }
                         direction = "N";
                         break;
                     case "SW":
-                        getNextCell = function() { return [row + i, column - i] }
+                        getNextCell = function() { return [row + distance, column - distance] }
                         direction = "NE";
                         break;
                     case "W":
-                        getNextCell = function() { return [row, column - i] }
+                        getNextCell = function() { return [row, column - distance] }
                         direction = "E";
                         break;
                     case "NW":
-                        getNextCell = function() { return [row - i, column - i] }
+                        getNextCell = function() { return [row - distance, column - distance] }
                         direction = "SE";
                         break;
                 }
                 // Traverse the cells in a diven direction
                 // While neighbor in this direction is a valid cell
-                for (i; isValidNeighbor(getNextCell()[0], getNextCell()[1]); i++) {
+                for (distance; isValidNeighbor(getNextCell()[0], getNextCell()[1]); distance++) {
                     // If this cell is a match, increment tally
                     if (board[getNextCell()[0]][getNextCell()[1]].getValue() === playerToken) {
                         consecutiveTokens++;
@@ -204,12 +210,17 @@ const GameController = (function(
         }
 
         // Opposite directions are also checked, so only four calls need to be made
-        if (winningLine("N")) return true;
-        else if (winningLine("NE")) return true;
-        else if (winningLine("E")) return true;
-        else if (winningLine("SE")) return true;
-
+        if (isWinningLine("N") || isWinningLine("NE") || isWinningLine("E") || isWinningLine("SE")) {
+            won = true;
+            return true;
+        }
         return false;
+    }
+
+    const resetGame = () => {
+        currentPlayer = players[0];
+        won = false;
+        tied = false;
     }
 
     printNextRound();
@@ -219,21 +230,25 @@ const GameController = (function(
         gameTied,
         gameWon,
         getCurrentPlayer,
-        clearBoard: Gameboard.clearBoard
+        clearBoard: Gameboard.clearBoard,
+        resetGame
     }
 })();
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* * ScreenController handles the logic for displaying to the DOM
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 const screenController = (function() {
     const playerDiv = document.querySelector(".player-turn");
     const boardDiv = document.querySelector(".board");
     const modal = document.querySelector(".modal");
+    const modalReset = document.querySelector(".modal-reset");
 
     const game = GameController;
 
     /* * * * * * * * *
     * * Board Controls
     * * * * * * * * * */
-
     // Get current state of the board and populate the cells
     const displayScreen = () => {
         // Clear previous state
@@ -265,10 +280,10 @@ const screenController = (function() {
         // Make sure actual button was pushed
         if (isNaN(selectedRow) || isNaN(selectedColumn)) return;
         
-        // Play the round the check for win/tie status
-        const round = game.playRound(selectedRow, selectedColumn);
-        if (round === "won" || round === "tie") {
-            showModal(round);
+        // Play the round and check for win/tie status
+        game.playRound(selectedRow, selectedColumn);
+        if (game.gameWon() || game.gameTied()) {
+            showModal();
         }
 
         displayScreen();
@@ -279,18 +294,21 @@ const screenController = (function() {
     /* * * * * * * * *
     * * Modal Controls
     * * * * * * * * * */
-    function showModal(round) {
+    function showModal() {
         const resultDiv = document.querySelector(".result");
         modal.showModal();
-        round === "won" ? resultDiv.textContent = `${game.getCurrentPlayer().name} won the game!`
-                   : resultDiv.textContent = `Tie Game`;
-    }
-    // Once modal is closed, reset the board
-    document.querySelector(".reset-btn").addEventListener('click', () => {
+        game.gameWon() ? resultDiv.textContent = `${game.getCurrentPlayer().name} won the game!`
+                       : resultDiv.textContent = `Tie Game`;
+    };
+    // Close modal and reset the board
+    const closeModal = () => {
         modal.close();
         game.clearBoard();
+        game.resetGame();
         displayScreen();
-    })
+    };
+    
+    modalReset.addEventListener('click', closeModal)
 
     // First screen render
     displayScreen();
