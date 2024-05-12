@@ -59,7 +59,7 @@ const Gameboard = (function() {
 * * or player 2's token
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 function BoardCell() {
-    let value = 0;
+    let value;
     // Change cell's value
     const addToken = (playerToken) => {
         value = playerToken;
@@ -86,11 +86,13 @@ const GameController = (function(
     const players = [
         {
             name: player1,
-            token: player1Token
+            token: player1Token,
+            score: 0
         },
         {
             name: player2,
-            token: player2Token
+            token: player2Token,
+            score: 0
         }
     ]
     
@@ -103,6 +105,7 @@ const GameController = (function(
     }
 
     const getCurrentPlayer = () => currentPlayer;
+    const getPlayerScores = () => [players[0].score, players[1].score];
     const gameWon = () => won;
     const gameTied = () => tied;
 
@@ -124,7 +127,7 @@ const GameController = (function(
     // For each row, create a new array of the cell's values and filter the rows that contain emtpy space
     // If there are no empty spaces, the game is a tie
     const setTied = () => {
-        if(!Gameboard.getBoard().filter(row => (row.map(cell => cell.getValue()).includes(0))).length) {
+        if(!Gameboard.getBoard().filter(row => (row.map(cell => cell.getValue()).includes(undefined))).length) {
             tied = true;
             return true;
         }
@@ -211,21 +214,28 @@ const GameController = (function(
 
         // Opposite directions are also checked, so only four calls need to be made
         if (isWinningLine("N") || isWinningLine("NE") || isWinningLine("E") || isWinningLine("SE")) {
+            getCurrentPlayer().score = getCurrentPlayer().score + 1;
             won = true;
             return true;
         }
         return false;
     }
 
-    const resetGame = () => {
-        currentPlayer = players[0];
+    const resetGame = (type) => {
         won = false;
         tied = false;
+        currentPlayer = players[0];
+        // Hard reset resets entire game
+        if (type === "hard") {
+            players[0].score = 0;
+            players[1].score = 0;
+        }
     }
 
     printNextRound();
 
     return {
+        getPlayerScores,
         playRound,
         gameTied,
         gameWon,
@@ -239,10 +249,11 @@ const GameController = (function(
 * * ScreenController handles the logic for displaying to the DOM
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 const screenController = (function() {
-    const playerDiv = document.querySelector(".player-turn");
+    //const playerDiv = document.querySelector(".player-turn");
     const boardDiv = document.querySelector(".board");
-    const modal = document.querySelector(".modal");
-    const modalReset = document.querySelector(".modal-reset");
+    const score1 = document.querySelector(".score.p1 span");
+    const score2 = document.querySelector(".score.p2 span");
+    const modal = document.querySelector(".game-modal");
 
     const game = GameController;
 
@@ -256,7 +267,9 @@ const screenController = (function() {
 
         const board = Gameboard.getBoard();
         // Display current player's turn
-        playerDiv.textContent = `${game.getCurrentPlayer().name}'s turn`;
+        //playerDiv.textContent = `${game.getCurrentPlayer().name}'s turn`;
+        score1.textContent = `${game.getPlayerScores()[0]}`;
+        score2.textContent = `${game.getPlayerScores()[1]}`;
 
         // For each cell, create a button and place it onto the board
         board.forEach((row, rowIdx) => {
@@ -291,6 +304,17 @@ const screenController = (function() {
 
     boardDiv.addEventListener('click', clickHandler);
 
+    // Reset the screen
+    const resetScreen = (e) => {
+        let resetType = "soft";
+        if (e.target.id === "hard-reset") resetType = "hard";
+        game.clearBoard();
+        game.resetGame(resetType);
+        displayScreen();
+    }
+    // Hard reset resets scores
+    document.querySelector(".board-reset").addEventListener('click', (e) => resetScreen(e));
+
     /* * * * * * * * *
     * * Modal Controls
     * * * * * * * * * */
@@ -303,14 +327,13 @@ const screenController = (function() {
     // Close modal and reset the board
     const closeModal = () => {
         modal.close();
-        game.clearBoard();
-        game.resetGame();
-        displayScreen();
+        resetScreen(); // Soft reset to keep scores and alternate who goes first each round
     };
     
-    modalReset.addEventListener('click', closeModal)
+    document.querySelector(".modal-reset").addEventListener('click', closeModal);
 
-    // First screen render
+
+    // Initial screen render
     displayScreen();
 })();
 

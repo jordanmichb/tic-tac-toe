@@ -7,14 +7,26 @@
     <script src="./script.js" defer></script>
     <title>Tic Tac Toe</title>
 </head>
-<body>
-    <div class="game-container">
-        <h1 class="player-turn"></h1>
-        <div class="board"></div>
-    </div>
-    <dialog class="modal">
-        <p class="result"></p>
-        <button class="modal-reset" type="button">New Game</button>
-    </dialog>
-</body>
+    <body>
+        <h1>TIC TAC TOE</h1>
+        <div class="game-container">
+
+            <div class="player-info">
+                <div class="info">Player 1
+                    <div class="score p1">Score: <span>0</span></div>
+                </div>
+                <div class="info">Player 2
+                    <div class="score p2">Score: <span>0</span></div>
+                </div>
+            </div>
+
+            <div class="board"></div>
+            <button id="hard-reset" class="board-reset">Reset Game</button>
+        </div>
+
+        <dialog class="game-modal">
+            <p class="result"></p>
+            <button class="modal-reset" type="button">Next Round</button>
+        </dialog>
+    </body>
 </html>

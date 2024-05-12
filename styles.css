@@ -1,15 +1,104 @@
+@font-face {
+    font-family: 'poetsen one';
+    src: url('./fonts/poetsenone-regular-webfont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --body-background: linear-gradient(90deg, #f0f6ff, #fffff6);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100%;
+    border: 1px solid green;
+    font-family: 'poetsen one';
+    background-image:var(--body-background)
+}
+
+h1 {
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 4rem;
+    letter-spacing: .15em;
+}
+
 .game-container {
     border: 1px solid blue;
     padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5rem;
 }
 
-.player-turn {
-    border: 1px solid red;
+button {
+    font-family: 'poetsen one';
 }
+
+/* * * * * * * * * * *
+* * Player Info Board
+* * * * * * * * * * */
+.player-info {
+    display: flex;
+    gap: 50px;
+    width: clamp(300px, 40%, 500px);
+    font-size: 1.5rem;
+}
+
+.info {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.info:last-child {
+    text-align: end;
+}
+
+.score {
+    margin-top: 20px;
+}
+
+/* * * * * * * * * * *
+* * Game Board
+* * * * * * * * * * */
 
 .board {
-    border: 1px solid green;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    gap: 3px;
+    width: clamp(200px, 40%, 500px);
+    aspect-ratio: 1 / 1; /* Keeps height same as width */
+    background-color: black;
+}
+
+.grid-cell {
+    background-color: white;
+    border: none;
+    font-size: 2rem;
+}
+
+/* * * * * * * * * * *
+* * Modals
+* * * * * * * * * * */
+
+dialog {
+    align-self: center;
+    margin: 0 auto;
+}
+
+.game-modal {
+    background-color: rgba(255, 0, 0, 0.455);
+}
+
+* {
+    border: 1px solid red;
 }
