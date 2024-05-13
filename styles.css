@@ -149,7 +149,6 @@ button {
 .grid-cell:hover {
     /* box-shadow: 0px 0px 10px var(--hover-border), inset 0px 0px 10px var(--hover-border); */
     outline: 2px solid var(--hover-border);
-    transform: scale(1.05);
     transition: transform 350ms;
 }
 
