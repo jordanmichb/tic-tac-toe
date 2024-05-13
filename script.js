@@ -3,13 +3,14 @@
 * * logic that manipulates the board
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 const Gameboard = (function() {
-    const rows = 3;
-    const columns = 3;
-    const numToWin = 3;
-    const board = [];
+    let rows = 3;
+    let columns = 3;
+    let numToWin = 3;
+    let board = [];
     clearBoard();
 
     function clearBoard() {
+        board = []
         // Create a 2D array to represent an empty board
         for (let i = 0; i < rows; i++) {
             board[i] = []
@@ -40,6 +41,9 @@ const Gameboard = (function() {
     const getRows = () => rows;
     const getColumns = () => columns;
     const getNumToWin = () => numToWin;
+    const setRows = (newRows) => rows = newRows;
+    const setColumns = (newColumns) => columns = newColumns;
+    const setNumToWin = (newWinNum) => numToWin = newWinNum;
 
     return {
         clearBoard,
@@ -48,7 +52,10 @@ const Gameboard = (function() {
         getBoard,
         getRows,
         getColumns,
-        getNumToWin
+        getNumToWin,
+        setRows,
+        setColumns,
+        setNumToWin
     }
 })();
 
@@ -257,6 +264,7 @@ const screenController = (function() {
     const player2 = document.querySelector(".info.p2");
     const score1 = document.querySelector(".score.p1 span");
     const score2 = document.querySelector(".score.p2 span");
+    const sizeBtns = document.querySelectorAll(".size");
     const modal = document.querySelector(".game-modal");
 
     const game = GameController;
@@ -323,7 +331,7 @@ const screenController = (function() {
 
     // Reset the screen
     const resetScreen = (e) => {
-        let resetType = "soft";
+        let resetType;
         if (e.target.id === "hard-reset") resetType = "hard";
         game.clearBoard();
         game.resetGame(resetType);
@@ -331,6 +339,39 @@ const screenController = (function() {
     }
     // Hard reset resets scores
     document.querySelector(".board-reset").addEventListener('click', (e) => resetScreen(e));
+
+    /* * * * * * * * * * *
+    * * Grid Size Controls
+    * * * * * * * * * * * */
+    const setGridSize = (e) => {
+        if (e.target.id === "3") {
+            Gameboard.setRows(3);
+            Gameboard.setColumns(3);
+            Gameboard.setNumToWin(3);
+            boardDiv.classList.remove("six", "ten");
+            
+            
+            resetScreen(e);
+        }
+        else if (e.target.id === "6") {
+            boardDiv.classList.remove("ten");
+            boardDiv.classList.add("six");
+            Gameboard.setRows(6);
+            Gameboard.setColumns(6);
+            Gameboard.setNumToWin(4);
+            
+            resetScreen(e);
+        }
+        else if (e.target.id === "10") {
+            Gameboard.setRows(10);
+            Gameboard.setColumns(10);
+            Gameboard.setNumToWin(5);
+            boardDiv.classList.remove("six");
+            boardDiv.classList.add("ten");
+            resetScreen(e);
+        }
+    }
+    sizeBtns.forEach(button => button.addEventListener('click', (e) => setGridSize(e)));
 
     /* * * * * * * * *
     * * Modal Controls

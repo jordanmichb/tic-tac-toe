@@ -21,11 +21,11 @@
 
     --box-shadow: 2px 2px 5px rgb(182, 182, 182);
 
-    --highlight-border: #ff000070;
-    --highlight-background: #ff00330b;
-    --hover-border: #ff000070;
+    --highlight-border: #7ae582;
+    --highlight-background: #7ae5812a;
+    --hover-border: #7ae582;
 
-    --x-color: #38b000;
+    --x-color: #ef233c;
     --o-color: #0077b6;
 }
 
@@ -54,6 +54,11 @@ h1 {
     padding: 50px 0;
 }
 
+.winning-number {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 button {
     font-family: 'freeman';
     background-color: var(--button-background-color);
@@ -70,10 +75,7 @@ button {
 .player-info {
     display: flex;
     font-size: 1.1rem;
-}
-
-.player-info.top {
-    margin: 0 auto;
+    margin: 0 auto 20px auto;
     gap: 40px;
     width: clamp(300px, 40%, 500px);
 }
@@ -109,9 +111,34 @@ button {
     margin-top: 20px;
 }
 
-.score span {
+.score.p1 span {
     margin-left: 15px;
-    color: rgb(218, 34, 34);
+    color: #ef233c;
+}
+
+.score.p2 span {
+    margin-left: 15px;
+    color: #0077b6;
+}
+
+/* * * * * * * * * * *
+* * Grid Size Buttons
+* * * * * * * * * * */
+.grid-sizes {
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    width: clamp(300px, 40%, 500px);
+}
+
+.size {
+    padding: .3rem 1rem;
+    transition: box-shadow 350ms, background-color 350ms;
+}
+
+.size:hover {
+    background-color: var(--highlight-background);
+    box-shadow: 0px 0px 5px var(--highlight-border), inset 0px 0px 5px var(--highlight-border);
 }
 
 /* * * * * * * * * * *
@@ -119,13 +146,23 @@ button {
 * * * * * * * * * * */
 
 .board {
-    margin: 50px auto 20px auto;
+    margin: 20px auto 20px auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: clamp(5px, .5svw, 10px);
+    gap: clamp(5px, .5vw, 10px);
     width: clamp(300px, 40%, 500px);
     aspect-ratio: 1 / 1; /* Keeps height same as width */
+}
+
+.board.six {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+}
+
+.board.ten {
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
 }
 
 /* Cell button container for dynamic font size based on container width */
@@ -167,7 +204,7 @@ button {
     display: block;
     padding: 1rem 0;
     font-size: 1.1rem;
-    width: clamp(300px, 40%, 500px);;
+    width: clamp(300px, 40%, 500px);
     margin: 0 auto;
     transition: box-shadow 350ms, background-color 350ms;
 }
