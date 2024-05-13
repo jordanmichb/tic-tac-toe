@@ -269,13 +269,13 @@ const screenController = (function() {
         // Clear previous state
         boardDiv.textContent = "";
         player1.classList.remove("highlight");
-        player2.classList.remove("highlight2");
+        player2.classList.remove("highlight");
         // Get current state of the board
         const board = Gameboard.getBoard();
 
         // Highlight current player's turn
         game.getCurrentPlayer().number === 1 ? player1.classList.add("highlight")
-                                             : player2.classList.add("highlight2");
+                                             : player2.classList.add("highlight");
         // Display current player scores
         score1.textContent = `${game.getPlayerScores()[0]}`;
         score2.textContent = `${game.getPlayerScores()[1]}`;
@@ -338,7 +338,7 @@ const screenController = (function() {
     function showModal() {
         const resultDiv = document.querySelector(".result");
         modal.showModal();
-        game.gameWon() ? resultDiv.textContent = `${game.getCurrentPlayer().name} won the game!`
+        game.gameWon() ? resultDiv.textContent = `${game.getCurrentPlayer().name} wins!`
                        : resultDiv.textContent = `Tie Game`;
     };
     // Close modal and reset the board

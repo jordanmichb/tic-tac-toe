@@ -13,14 +13,19 @@
 }
 
 :root {
-    /* --body-background: linear-gradient(90deg, #f0f6ff, #fffff6); */
-    --body-background-color: #edf2f4;
-    --info-background-color: white;
+    --body-background: linear-gradient(90deg, #c9e4ca47, #878dbb49);
+    /* --body-background-color: #edf2f4; */
+    --info-background-color: #f8ffff;
+    --cell-background-color: #f8ffff;
+    --button-background-color: #f8ffff;
 
-    --highlight-border: #38b000;
-    --highlight-background: #38b00032;
-    --highlight-border2: #0077b6;
-    --highlight-background2: #0076b624;
+    --box-shadow: 2px 2px 5px rgb(182, 182, 182);
+
+    --highlight-border: #ff000070;
+    --highlight-background: #ff00330f;
+    --highlight-border2: #ffee32;
+    --highlight-background2: #f0f6493c;
+    --hover-border: #ff000070;
 
     --x-color: #38b000;
     --o-color: #0077b6;
@@ -35,7 +40,7 @@
 body {
     height: 100%;
     font-family: 'freeman';
-    /* background-image:var(--body-background); */
+    background-image:var(--body-background);
     background-color: var(--body-background-color);
 }
 
@@ -47,7 +52,7 @@ h1 {
 }
 
 .game-container {
-    border: 1px solid;
+    /* border: 1px solid; */
     padding: 50px 0;
     /* text-align: center; */
     /* display: flex;
@@ -58,6 +63,11 @@ h1 {
 
 button {
     font-family: 'freeman';
+    background-color: var(--button-background-color);
+    border: none;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+    cursor: pointer;
 }
 
 /* * * * * * * * * * *
@@ -84,6 +94,7 @@ button {
     padding: 0.5rem 1rem;
     border-radius: 10px;
     background-color: var(--info-background-color);
+    box-shadow: var(--box-shadow);
     transition: background-color 350ms, box-shadow 350ms;
 }
 
@@ -130,7 +141,7 @@ button {
 }
 
 .grid-cell {
-    background-color: white;
+    background-color: var(--cell-background-color);
     border: none;
     border-radius: 5px;
     width: 100%;
@@ -138,10 +149,12 @@ button {
     font-size: 50cqw; /* Font size based on container width */ 
     font-family: 'raleway';
     font-weight: thin;
+    box-shadow: var(--box-shadow);
+    cursor: pointer;
 }
 
 .grid-cell:hover {
-    box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
+    box-shadow: 0px 0px 10px var(--hover-border), inset 0px 0px 10px var(--hover-border);
     transform: scale(1.05);
     transition: transform 350ms;
 }
@@ -154,33 +167,46 @@ button {
     color: var(--o-color);
 }
 
-
-
-/* * * * * * * * * * *
-* * Modals
-* * * * * * * * * * */
-
-dialog {
-    align-self: center;
-    margin: 0 auto;
-    padding: 2rem;
-    font-size: 2rem;
-}
-
-.game-modal {
-    background-color: rgba(255, 0, 0, 0.455);
-}
-
 /* * * * * * * * * * *
 * * Reset Button
 * * * * * * * * * * */
 .board-reset {
     display: block;
+    padding: 1rem 0;
+    font-size: 1.1rem;
     width: clamp(300px, 40%, 500px);;
     margin: 0 auto;
-    background: none;
-    border: 1px solid;
+    transition: box-shadow 350ms, background-color 350ms;
+}
+
+.board-reset:hover {
+    background-color: var(--highlight-background);
+    box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
+}
+
+/* * * * * * * * * * *
+* * Modals
+* * * * * * * * * * */
+dialog {
+    align-self: center;
+    margin: 0 auto;
+    padding: 2rem;
+    font-size: 2rem;
     border-radius: 5px;
+}
+
+.game-modal {
+    /* background-image: linear-gradient(90deg, #c9e4ca47, #878dbb49); */
+    background-color: rgba(228, 228, 228, 0.901);
+}
+
+.game-modal button {
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.game-modal button:hover {
+    background-color: #e2ecec;
 }
 
 /* * {
