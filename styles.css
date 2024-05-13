@@ -1,7 +1,7 @@
 @font-face {
-    font-family: 'poetsen one';
-    src: url('./fonts/poetsenone-regular-webfont.woff2') format('woff2');
-    font-weight: normal;
+    font-family: 'raleway';
+    src: url('./fonts/raleway-thin-webfont.woff2') format('woff2');
+    font-weight: thin;
     font-style: normal;
 }
 
@@ -14,10 +14,16 @@
 
 :root {
     /* --body-background: linear-gradient(90deg, #f0f6ff, #fffff6); */
-    --body-background-color: rgb(236, 236, 236);
+    --body-background-color: #edf2f4;
+    --info-background-color: white;
 
-    --highlight-border: #70ea51;
-    --highlight-background: #70ea514f;
+    --highlight-border: #38b000;
+    --highlight-background: #38b00032;
+    --highlight-border2: #0077b6;
+    --highlight-background2: #0076b624;
+
+    --x-color: #38b000;
+    --o-color: #0077b6;
 }
 
 * {
@@ -42,7 +48,7 @@ h1 {
 
 .game-container {
     border: 1px solid;
-    padding: 50px;
+    padding: 50px 0;
     /* text-align: center; */
     /* display: flex;
     flex-direction: column;
@@ -59,13 +65,13 @@ button {
 * * * * * * * * * * */
 .player-info {
     display: flex;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     /* border: 1px solid; */
 }
 
 .player-info.top {
     margin: 0 auto;
-    gap: 50px;
+    gap: 40px;
     width: clamp(300px, 40%, 500px);
 }
 
@@ -75,9 +81,10 @@ button {
 
 .info {
     flex: 1;
-    padding: 0 1rem;
-    border-radius: 5px;
-    background-color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background-color: var(--info-background-color);
+    transition: background-color 350ms, box-shadow 350ms;
 }
 
 .info:last-child {
@@ -90,12 +97,17 @@ button {
 }
 
 .info.highlight2 {
-    background-color: rgba(0, 4, 255, 0.256);
-    box-shadow: 0px 0px 10px blue, inset 0px 0px 10px blue;
+    background-color: var(--highlight-background2);
+    box-shadow: 0px 0px 10px var(--highlight-border2), inset 0px 0px 10px var(--highlight-border2);
 }
 
 .score {
     margin-top: 20px;
+}
+
+.score span {
+    margin-left: 15px;
+    color: rgb(226, 51, 51);
 }
 
 /* * * * * * * * * * *
@@ -124,12 +136,22 @@ button {
     width: 100%;
     height: 100%;
     font-size: 50cqw; /* Font size based on container width */ 
+    font-family: 'raleway';
+    font-weight: thin;
 }
 
 .grid-cell:hover {
     box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
     transform: scale(1.05);
     transition: transform 350ms;
+}
+
+.grid-cell.color-x {
+    color: var(--x-color);
+}
+
+.grid-cell.color-o {
+    color: var(--o-color);
 }
 
 
@@ -156,6 +178,9 @@ dialog {
     display: block;
     width: clamp(300px, 40%, 500px);;
     margin: 0 auto;
+    background: none;
+    border: 1px solid;
+    border-radius: 5px;
 }
 
 /* * {

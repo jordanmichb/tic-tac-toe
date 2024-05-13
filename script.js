@@ -269,13 +269,13 @@ const screenController = (function() {
         // Clear previous state
         boardDiv.textContent = "";
         player1.classList.remove("highlight");
-        player2.classList.remove("highlight");
+        player2.classList.remove("highlight2");
         // Get current state of the board
         const board = Gameboard.getBoard();
 
         // Highlight current player's turn
         game.getCurrentPlayer().number === 1 ? player1.classList.add("highlight")
-                                             : player2.classList.add("highlight");
+                                             : player2.classList.add("highlight2");
         // Display current player scores
         score1.textContent = `${game.getPlayerScores()[0]}`;
         score2.textContent = `${game.getPlayerScores()[1]}`;
@@ -286,6 +286,9 @@ const screenController = (function() {
                 // Create span button container so container units can be used for font size
                 const cellSpan = document.createElement("span");
                 const cellBtn = document.createElement("button");
+
+                cell.getValue() === 'X' ? cellBtn.classList.add("color-x")
+                                        : cellBtn.classList.add("color-o");
 
                 cellBtn.textContent = cell.getValue();
                 cellBtn.classList.add("grid-cell");
