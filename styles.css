@@ -5,8 +5,19 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'freeman';
+    src: url('./fonts/freeman-regular-webfont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
-    --body-background: linear-gradient(90deg, #f0f6ff, #fffff6);
+    /* --body-background: linear-gradient(90deg, #f0f6ff, #fffff6); */
+    --body-background-color: rgb(236, 236, 236);
+
+    --highlight-border: #70ea51;
+    --highlight-background: #70ea514f;
 }
 
 * {
@@ -17,49 +28,70 @@
 
 body {
     height: 100%;
-    border: 1px solid green;
-    font-family: 'poetsen one';
-    background-image:var(--body-background)
+    font-family: 'freeman';
+    /* background-image:var(--body-background); */
+    background-color: var(--body-background-color);
 }
 
 h1 {
     text-align: center;
     padding: 1rem 0;
-    font-size: 4rem;
+    font-size: 3.5rem;
     letter-spacing: .15em;
 }
 
 .game-container {
-    border: 1px solid blue;
+    border: 1px solid;
     padding: 50px;
-    display: flex;
+    /* text-align: center; */
+    /* display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5rem;
+    gap: 5rem; */
 }
 
 button {
-    font-family: 'poetsen one';
+    font-family: 'freeman';
 }
 
 /* * * * * * * * * * *
-* * Player Info Board
+* * Player Info Boards
 * * * * * * * * * * */
 .player-info {
     display: flex;
+    font-size: 1.5rem;
+    /* border: 1px solid; */
+}
+
+.player-info.top {
+    margin: 0 auto;
     gap: 50px;
     width: clamp(300px, 40%, 500px);
-    font-size: 1.5rem;
+}
+
+.player-info.side {
+    display: inline-block;
 }
 
 .info {
     flex: 1;
-    padding: 1rem;
+    padding: 0 1rem;
     border-radius: 5px;
+    background-color: white;
 }
 
 .info:last-child {
     text-align: end;
+}
+
+.info.highlight {
+    background-color: var(--highlight-background);
+    box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
+}
+
+.info.highlight2 {
+    background-color: rgba(0, 4, 255, 0.256);
+    box-shadow: 0px 0px 10px blue, inset 0px 0px 10px blue;
 }
 
 .score {
@@ -71,20 +103,36 @@ button {
 * * * * * * * * * * */
 
 .board {
+    margin: 50px auto 20px auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 3px;
-    width: clamp(200px, 40%, 500px);
+    gap: clamp(5px, .5svw, 10px);
+    width: clamp(300px, 40%, 500px);
     aspect-ratio: 1 / 1; /* Keeps height same as width */
-    background-color: black;
+}
+
+/* Cell button container for dynamic font size based on container width */
+.board span {
+    container-type: size;
 }
 
 .grid-cell {
     background-color: white;
     border: none;
-    font-size: 2rem;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    font-size: 50cqw; /* Font size based on container width */ 
 }
+
+.grid-cell:hover {
+    box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
+    transform: scale(1.05);
+    transition: transform 350ms;
+}
+
+
 
 /* * * * * * * * * * *
 * * Modals
@@ -93,12 +141,36 @@ button {
 dialog {
     align-self: center;
     margin: 0 auto;
+    padding: 2rem;
+    font-size: 2rem;
 }
 
 .game-modal {
     background-color: rgba(255, 0, 0, 0.455);
 }
 
-* {
-    border: 1px solid red;
+/* * * * * * * * * * *
+* * Reset Button
+* * * * * * * * * * */
+.board-reset {
+    display: block;
+    width: clamp(300px, 40%, 500px);;
+    margin: 0 auto;
 }
+
+/* * {
+    border: 1px solid red;
+} */
+
+
+/* * * * * * * * * * *
+* * Media Queries
+* * * * * * * * * * */
+/* @container (max-width: 26px) {
+    .grid-cell {
+        background-color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 5px;
+    }
+} */

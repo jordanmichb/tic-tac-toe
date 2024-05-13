@@ -87,12 +87,14 @@ const GameController = (function(
         {
             name: player1,
             token: player1Token,
-            score: 0
+            score: 0,
+            number: 1
         },
         {
             name: player2,
             token: player2Token,
-            score: 0
+            score: 0,
+            number: 2
         }
     ]
     
@@ -251,6 +253,8 @@ const GameController = (function(
 const screenController = (function() {
     //const playerDiv = document.querySelector(".player-turn");
     const boardDiv = document.querySelector(".board");
+    const player1 = document.querySelector(".info.p1");
+    const player2 = document.querySelector(".info.p2");
     const score1 = document.querySelector(".score.p1 span");
     const score2 = document.querySelector(".score.p2 span");
     const modal = document.querySelector(".game-modal");
@@ -264,24 +268,34 @@ const screenController = (function() {
     const displayScreen = () => {
         // Clear previous state
         boardDiv.textContent = "";
-
+        player1.classList.remove("highlight");
+        player2.classList.remove("highlight");
+        // Get current state of the board
         const board = Gameboard.getBoard();
-        // Display current player's turn
-        //playerDiv.textContent = `${game.getCurrentPlayer().name}'s turn`;
+
+        // Highlight current player's turn
+        game.getCurrentPlayer().number === 1 ? player1.classList.add("highlight")
+                                             : player2.classList.add("highlight");
+        // Display current player scores
         score1.textContent = `${game.getPlayerScores()[0]}`;
         score2.textContent = `${game.getPlayerScores()[1]}`;
 
         // For each cell, create a button and place it onto the board
         board.forEach((row, rowIdx) => {
             row.forEach((cell, colIdx) => {
+                // Create span button container so container units can be used for font size
+                const cellSpan = document.createElement("span");
                 const cellBtn = document.createElement("button");
-                cellBtn.classList.add("grid-cell");
+
                 cellBtn.textContent = cell.getValue();
+                cellBtn.classList.add("grid-cell");
+                
                 // Add data attribute to the identify row/column the cell occupies
                 cellBtn.dataset.row = rowIdx;
                 cellBtn.dataset.column = colIdx;
 
-                boardDiv.appendChild(cellBtn);
+                cellSpan.appendChild(cellBtn);
+                boardDiv.appendChild(cellSpan);
             })
         })
     }
@@ -325,12 +339,12 @@ const screenController = (function() {
                        : resultDiv.textContent = `Tie Game`;
     };
     // Close modal and reset the board
-    const closeModal = () => {
+    const closeModal = (e) => {
         modal.close();
-        resetScreen(); // Soft reset to keep scores and alternate who goes first each round
+        resetScreen(e); // Soft reset to keep scores and alternate who goes first each round
     };
     
-    document.querySelector(".modal-reset").addEventListener('click', closeModal);
+    document.querySelector(".modal-reset").addEventListener('click', (e) => closeModal(e));
 
 
     // Initial screen render
