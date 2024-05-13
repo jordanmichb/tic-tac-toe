@@ -22,9 +22,7 @@
     --box-shadow: 2px 2px 5px rgb(182, 182, 182);
 
     --highlight-border: #ff000070;
-    --highlight-background: #ff00330f;
-    --highlight-border2: #ffee32;
-    --highlight-background2: #f0f6493c;
+    --highlight-background: #ff00330b;
     --hover-border: #ff000070;
 
     --x-color: #38b000;
@@ -40,6 +38,7 @@
 body {
     height: 100%;
     font-family: 'freeman';
+    color: rgb(69, 69, 69);
     background-image:var(--body-background);
     background-color: var(--body-background-color);
 }
@@ -52,13 +51,7 @@ h1 {
 }
 
 .game-container {
-    /* border: 1px solid; */
     padding: 50px 0;
-    /* text-align: center; */
-    /* display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5rem; */
 }
 
 button {
@@ -68,6 +61,7 @@ button {
     border-radius: 5px;
     box-shadow: var(--box-shadow);
     cursor: pointer;
+    color: rgb(69, 69, 69);
 }
 
 /* * * * * * * * * * *
@@ -76,7 +70,6 @@ button {
 .player-info {
     display: flex;
     font-size: 1.1rem;
-    /* border: 1px solid; */
 }
 
 .player-info.top {
@@ -104,7 +97,7 @@ button {
 
 .info.highlight {
     background-color: var(--highlight-background);
-    box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
+    box-shadow: 0px 0px 5px var(--highlight-border), inset 0px 0px 5px var(--highlight-border);
 }
 
 .info.highlight2 {
@@ -118,7 +111,7 @@ button {
 
 .score span {
     margin-left: 15px;
-    color: rgb(226, 51, 51);
+    color: rgb(218, 34, 34);
 }
 
 /* * * * * * * * * * *
@@ -154,7 +147,8 @@ button {
 }
 
 .grid-cell:hover {
-    box-shadow: 0px 0px 10px var(--hover-border), inset 0px 0px 10px var(--hover-border);
+    /* box-shadow: 0px 0px 10px var(--hover-border), inset 0px 0px 10px var(--hover-border); */
+    outline: 2px solid var(--hover-border);
     transform: scale(1.05);
     transition: transform 350ms;
 }
@@ -181,7 +175,7 @@ button {
 
 .board-reset:hover {
     background-color: var(--highlight-background);
-    box-shadow: 0px 0px 10px var(--highlight-border), inset 0px 0px 10px var(--highlight-border);
+    box-shadow: 0px 0px 5px var(--highlight-border), inset 0px 0px 5px var(--highlight-border);
 }
 
 /* * * * * * * * * * *
@@ -209,19 +203,7 @@ dialog {
     background-color: #e2ecec;
 }
 
-/* * {
-    border: 1px solid red;
-} */
-
 
 /* * * * * * * * * * *
 * * Media Queries
 * * * * * * * * * * */
-/* @container (max-width: 26px) {
-    .grid-cell {
-        background-color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 5px;
-    }
-} */
