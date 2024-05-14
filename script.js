@@ -5,7 +5,7 @@
 const Gameboard = (function() {
     let rows = 3;
     let columns = 3;
-    let numToWin = 3;
+    //let numToWin = 3;
     let board = [];
     clearBoard();
 
@@ -40,11 +40,9 @@ const Gameboard = (function() {
     const getBoard = () => board;
     const getRows = () => rows;
     const getColumns = () => columns;
-    const getNumToWin = () => numToWin;
-    const setSize = (size, newWinNum) => {
+    const setRowsCols = (size) => {
         rows = size;
         columns = size;
-        numToWin = newWinNum;
     }
 
     return {
@@ -54,18 +52,16 @@ const Gameboard = (function() {
         getBoard,
         getRows,
         getColumns,
-        getNumToWin,
-        setSize,
+        setRowsCols
     }
 })();
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 * * BoardCell represent one square on the board. It consists 
 * * of a value that represents an empty spot, player 1's token, 
 * * or player 2's token
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-function BoardCell() {
+function Cell() {
     let value;
     // Change cell's value
     const addToken = (playerToken) => {
@@ -85,38 +81,37 @@ function BoardCell() {
 * * determines when there is a winner
 * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 const GameController = (function(
-    player1 = "Player One", // Default parameters that can be changed
+    player1 = "Player 1", // Default parameters that can be changed
     player1Token = "X",
-    player2 = "Player Two",
+    player2 = "Player 2",
     player2Token = "O"
 ) {
+    // Number of consecutive tokens needed to win corresponds to grid size
+    const gridWinNums = {3: 3, 6: 4, 10: 5};
     const players = [
         {
             name: player1,
             token: player1Token,
-            score: 0,
-            number: 1
+            score: 0
         },
         {
             name: player2,
             token: player2Token,
-            score: 0,
-            number: 2
+            score: 0
         }
     ]
-    
     let currentPlayer = players[0];
     let won = false;
     let tied = false;
 
+    const getCurrentPlayer = () => currentPlayer;
+    const getPlayerScores = () => [players[0].score, players[1].score];
+    const getNumToWin = (gridSize) => gridWinNums[gridSize];
+    const gameWon = () => won;
+    const gameTied = () => tied;
     const switchPlayerTurn = () => {
         currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
     }
-
-    const getCurrentPlayer = () => currentPlayer;
-    const getPlayerScores = () => [players[0].score, players[1].score];
-    const gameWon = () => won;
-    const gameTied = () => tied;
 
     // Print the current board state and announce whose turn it is
     const printNextRound = () => {
@@ -215,7 +210,7 @@ const GameController = (function(
                     // If cell is not a match, no point in checking the rest
                     else break;
                     // If enough consecutive tokens are found, this player has won
-                    if (consecutiveTokens === Gameboard.getNumToWin()) return true;
+                    if (consecutiveTokens === getNumToWin(Gameboard.getRows())) return true;
                 }
             }
             return false;
@@ -230,8 +225,8 @@ const GameController = (function(
         return false;
     }
 
-    const setGridSize = () => {
-
+    const setGrid = (size) => {
+        Gameboard.setRowsCols(size);
     }
 
     const resetGame = (type) => {
@@ -248,13 +243,15 @@ const GameController = (function(
     printNextRound();
 
     return {
+        getCurrentPlayer,
         getPlayerScores,
-        playRound,
+        getNumToWin,
         gameTied,
         gameWon,
-        getCurrentPlayer,
+        playRound,
+        setGrid,
+        resetGame,
         clearBoard: Gameboard.clearBoard,
-        resetGame
     }
 })();
 
@@ -287,8 +284,8 @@ const screenController = (function() {
         const board = Gameboard.getBoard();
 
         // Highlight current player's turn
-        game.getCurrentPlayer().number === 1 ? player1.classList.add("highlight")
-                                             : player2.classList.add("highlight");
+        game.getCurrentPlayer().name === "Player 1" ? player1.classList.add("highlight")
+                                                    : player2.classList.add("highlight");
         // Display current player scores
         score1.textContent = `${game.getPlayerScores()[0]}`;
         score2.textContent = `${game.getPlayerScores()[1]}`;
@@ -349,24 +346,11 @@ const screenController = (function() {
     * * Grid Size Controls
     * * * * * * * * * * * */
     const setGridSize = (e) => {
-        if (e.target.id === "3") {
-            Gameboard.setSize(3, 3);
-            boardDiv.style.gridTemplate = "repeat(3, 1fr) / repeat(3, 1fr)";
-            winningNumSpan.textContent = "3"
-            resetScreen(e);
-        }
-        else if (e.target.id === "6") {
-            Gameboard.setSize(6, 4);
-            boardDiv.style.gridTemplate = "repeat(6, 1fr) / repeat(6, 1fr)"
-            winningNumSpan.textContent = "4"
-            resetScreen(e);
-        }
-        else if (e.target.id === "10") {
-            Gameboard.setSize(10, 5);
-            boardDiv.style.gridTemplate = "repeat(10, 1fr) / repeat(10, 1fr)"
-            winningNumSpan.textContent = "5"
-            resetScreen(e);
-        }
+        const size = Number(e.target.id);
+        game.setGrid(size);
+        boardDiv.style.gridTemplate = `repeat(${size}, 1fr) / repeat(${size}, 1fr)`;
+        winningNumSpan.textContent = game.getNumToWin(size);
+        resetScreen(e);
     }
     sizeBtns.forEach(button => button.addEventListener('click', (e) => setGridSize(e)));
 
