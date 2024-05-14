@@ -156,14 +156,15 @@ button {
 .board {
     margin: 20px auto 20px auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    /* grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr); */
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
     gap: clamp(3px, .5vw, 10px);
     width: clamp(300px, 40%, 500px);
     aspect-ratio: 1 / 1; /* Keeps height same as width */
 }
 
-.board.six {
+/* .board.six {
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: repeat(6, 1fr);
 }
@@ -171,7 +172,7 @@ button {
 .board.ten {
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-}
+} */
 
 /* Cell button container for dynamic font size based on container width */
 .board span {

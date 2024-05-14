@@ -230,6 +230,10 @@ const GameController = (function(
         return false;
     }
 
+    const setGridSize = () => {
+
+    }
+
     const resetGame = (type) => {
         won = false;
         tied = false;
@@ -347,21 +351,19 @@ const screenController = (function() {
     const setGridSize = (e) => {
         if (e.target.id === "3") {
             Gameboard.setSize(3, 3);
-            boardDiv.classList.remove("six", "ten");
+            boardDiv.style.gridTemplate = "repeat(3, 1fr) / repeat(3, 1fr)";
             winningNumSpan.textContent = "3"
             resetScreen(e);
         }
         else if (e.target.id === "6") {
             Gameboard.setSize(6, 4);
-            boardDiv.classList.remove("ten");
-            boardDiv.classList.add("six");
+            boardDiv.style.gridTemplate = "repeat(6, 1fr) / repeat(6, 1fr)"
             winningNumSpan.textContent = "4"
             resetScreen(e);
         }
         else if (e.target.id === "10") {
             Gameboard.setSize(10, 5);
-            boardDiv.classList.remove("six");
-            boardDiv.classList.add("ten");
+            boardDiv.style.gridTemplate = "repeat(10, 1fr) / repeat(10, 1fr)"
             winningNumSpan.textContent = "5"
             resetScreen(e);
         }
