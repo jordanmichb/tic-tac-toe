@@ -21,7 +21,6 @@
 
 :root {
     --body-background: linear-gradient(90deg, #c9e4ca47, #878dbb49);
-    /* --body-background-color: #edf2f4; */
     --info-background-color: #f8ffff;
     --cell-background-color: #f8ffff;
     --button-background-color: #f8ffff;
