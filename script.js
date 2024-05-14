@@ -41,9 +41,11 @@ const Gameboard = (function() {
     const getRows = () => rows;
     const getColumns = () => columns;
     const getNumToWin = () => numToWin;
-    const setRows = (newRows) => rows = newRows;
-    const setColumns = (newColumns) => columns = newColumns;
-    const setNumToWin = (newWinNum) => numToWin = newWinNum;
+    const setSize = (size, newWinNum) => {
+        rows = size;
+        columns = size;
+        numToWin = newWinNum;
+    }
 
     return {
         clearBoard,
@@ -53,9 +55,7 @@ const Gameboard = (function() {
         getRows,
         getColumns,
         getNumToWin,
-        setRows,
-        setColumns,
-        setNumToWin
+        setSize,
     }
 })();
 
@@ -265,6 +265,7 @@ const screenController = (function() {
     const score1 = document.querySelector(".score.p1 span");
     const score2 = document.querySelector(".score.p2 span");
     const sizeBtns = document.querySelectorAll(".size");
+    const winningNumSpan = document.querySelector(".winning-number span");
     const modal = document.querySelector(".game-modal");
 
     const game = GameController;
@@ -345,29 +346,23 @@ const screenController = (function() {
     * * * * * * * * * * * */
     const setGridSize = (e) => {
         if (e.target.id === "3") {
-            Gameboard.setRows(3);
-            Gameboard.setColumns(3);
-            Gameboard.setNumToWin(3);
+            Gameboard.setSize(3, 3);
             boardDiv.classList.remove("six", "ten");
-            
-            
+            winningNumSpan.textContent = "3"
             resetScreen(e);
         }
         else if (e.target.id === "6") {
+            Gameboard.setSize(6, 4);
             boardDiv.classList.remove("ten");
             boardDiv.classList.add("six");
-            Gameboard.setRows(6);
-            Gameboard.setColumns(6);
-            Gameboard.setNumToWin(4);
-            
+            winningNumSpan.textContent = "4"
             resetScreen(e);
         }
         else if (e.target.id === "10") {
-            Gameboard.setRows(10);
-            Gameboard.setColumns(10);
-            Gameboard.setNumToWin(5);
+            Gameboard.setSize(10, 5);
             boardDiv.classList.remove("six");
             boardDiv.classList.add("ten");
+            winningNumSpan.textContent = "5"
             resetScreen(e);
         }
     }
